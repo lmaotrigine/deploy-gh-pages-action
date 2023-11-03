@@ -7,7 +7,7 @@ import { setTokens } from './set_tokens';
 import { setRepo, setCommitAuthor, getCommitMessage, commit, push, pushTag } from './git';
 import { getWorkDirName, addNoJekyll, addCNAME, skipOnFork } from './utils';
 
-export async function run(): Promise<void> {
+async function run(): Promise<void> {
   try {
     core.info(`[INFO]: Starting deploy action`);
     const i = getInputs();
@@ -79,3 +79,16 @@ export async function run(): Promise<void> {
     }
   }
 }
+
+// entrypoint lol
+(async (): Promise<void> => {
+  try {
+    await run()
+  } catch (err) {
+    if (err instanceof Error) {
+      core.setFailed(`Action failed with error: ${err.message}`)
+    } else {
+      core.setFailed(`unexpected error: ${err}`)
+    }
+  }
+})();
