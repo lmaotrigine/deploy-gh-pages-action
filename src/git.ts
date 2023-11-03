@@ -88,6 +88,7 @@ export async function setRepo(i: Inputs, remoteURL: string, workDir: string): Pr
       } else {
         core.info(`[INFO]: clean up ${destDir}`);
         core.info(`[INFO]: chdir ${destDir}`);
+        process.chdir(destDir);
         await exec.exec('git', ['rm', '-r', '--ignore-unmatch', '*']);
       }
       core.info(`[INFO]: chdir ${workDir}`);
