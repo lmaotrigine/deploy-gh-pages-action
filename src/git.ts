@@ -4,6 +4,7 @@ import * as glob from '@actions/glob';
 import * as io from '@actions/io';
 import path from 'path';
 import fs from 'fs';
+import {cp} from 'shelljs';
 import {URL} from 'url';
 import type {Inputs, CommandResult} from './lib';
 import {createDir} from './utils';
@@ -48,7 +49,8 @@ export async function copyAssets(publishDir: string, destDir: string, excludeAss
     await io.rmRF(gitGitPath);
   }
   core.info(`[INFO]: copy ${publishDir} to ${destDir}`);
-  io.cp(publishDir, destDir, {recursive: true, force: true, copySourceDirectory: false});
+  // io.cp doesn't dereference symlinks :(
+  cp('-rfL', [`${publishDir}/*`, `${publishDir}/.*`], destDir);
   await deleteExcludedAssets(destDir, excludeAssets);
 }
 
