@@ -1,0 +1,79 @@
+name: Deploy GitHub Pages Action
+description: GitHub action to deploy assets to GitHub Pages.
+author: lmaotrigine
+runs:
+  using: node20
+  main: dist/index.js
+branding:
+  icon: upload-cloud
+  color: blue
+inputs:
+  deploy_key:
+    description: A SSH ed25519 private key from a repository secret value for pushing to the remote branch.
+    required: false
+  github_token:
+    description: A generated GITHUB_TOKEN for pushing to the remote branch.
+    required: false
+  personal_access_token:
+    description: A Personal Access Token (PAT) for pushing to the remote branch.
+    required: false
+  publish_branch:
+    description: Target branch for deployment.
+    required: false
+    default: gh-pages
+  publish_dir:
+    description: Source directory to deploy.
+    required: false
+    default: public
+  dest_dir:
+    description: Destination subdirectory of deployment.
+    required: false
+    default: ''
+  external_repository:
+    description: Set an external repository (owner/repo) to deploy to.
+    required: false
+  allow_empty_commit:
+    description: Specify whether empty commits are allowed to the target branch.
+    required: false
+    default: 'false'
+  keep_files:
+    description: Specify whether existing files in the target branch should be removed before deployment.
+    required: false
+    default: 'false'
+  force_orphan:
+    description: Keep only the latest commit on the target branch.
+    required: false
+    default: 'false'
+  user_name:
+    description: Git user.name
+    required: false
+  user_email:
+    description: Git user.email
+    required: false
+  commit_message:
+    description: Custom commit message to prepend to the triggered commit SHA.
+    required: false
+  full_commit_message:
+    description: Custom commit message that overwrites the default completely.
+    required: false
+  tag_name:
+    description: Specify an optional tag name for the deployment
+    required: false
+  tag_message:
+    description: Specify the message for the tag
+    required: false
+  enable_jekyll:
+    description: Enable the GitHub pages built-in Jekyll
+    required: false
+    default: 'false'
+  disable_nojekyll:
+    description: Alias for enable_jekyll.
+    required: false
+    default: 'false'
+  cname:
+    description: Set a custom domain
+    required: false
+  exclude_assets:
+    description: Files or directories to exclude from being published
+    required: false
+    default: .github
