@@ -4,10 +4,10 @@ import * as glob from '@actions/glob';
 import * as io from '@actions/io';
 import path from 'path';
 import fs from 'fs';
-import {cp} from 'shelljs';
-import {URL} from 'url';
-import type {Inputs, CommandResult} from './lib';
-import {createDir} from './utils';
+import { cp } from 'shelljs';
+import { URL } from 'url';
+import type { Inputs, CommandResult } from './lib';
+import { createDir } from './utils';
 
 export async function createBranchForce(branch: string): Promise<void> {
   await exec.exec('git', ['init']);
@@ -15,12 +15,12 @@ export async function createBranchForce(branch: string): Promise<void> {
 }
 
 export function getServerUrl(): URL {
-  return new URL(process.env['GITHUB_SERVER_URL'] || 'https://github.com');
+  return new URL(process.env.GITHUB_SERVER_URL || 'https://github.com');
 }
 
 export async function deleteExcludedAssets(destDir: string, excludeAssets: string): Promise<void> {
   if (excludeAssets === '') return;
-  core.info(`[INFO]: delete excluded assets`);
+  core.info('[INFO]: delete excluded assets');
   const excludedAssetNames = excludeAssets.split(',');
   const excludedAssetPaths = ((): string[] => {
     const paths: string[] = [];
@@ -37,7 +37,7 @@ export async function deleteExcludedAssets(destDir: string, excludeAssets: strin
 }
 
 export async function copyAssets(publishDir: string, destDir: string, excludeAssets: string): Promise<void> {
-  core.info(`[INFO]: prepare publishing assets`);
+  core.info('[INFO]: prepare publishing assets');
   if (!fs.existsSync(publishDir)) {
     core.info(`[INFO]: create ${publishDir}`);
     await createDir(publishDir);
@@ -55,7 +55,9 @@ export async function copyAssets(publishDir: string, destDir: string, excludeAss
 }
 
 export async function setRepo(i: Inputs, remoteURL: string, workDir: string): Promise<void> {
-  const publishDir = path.isAbsolute(i.PublishDir) ? i.PublishDir : path.join(`${process.env.GITHUB_WORKSPACE}`, i.PublishDir);
+  const publishDir = path.isAbsolute(i.PublishDir)
+    ? i.PublishDir
+    : path.join(`${process.env.GITHUB_WORKSPACE}`, i.PublishDir);
   if (path.isAbsolute(i.DestDir)) throw new Error('dest_dir must be a relative path');
   const destDir = ((): string => {
     if (i.DestDir === '') return workDir;
@@ -78,15 +80,19 @@ export async function setRepo(i: Inputs, remoteURL: string, workDir: string): Pr
     listeners: {
       stdout: (data: Buffer): void => {
         result.output += data.toString();
-      }
-    }
+      },
+    },
   };
   try {
-    result.exitCode = await exec.exec('git', ['clone', '--depth=1', '--single-branch', '--branch', i.PublishBranch, remoteURL, workDir], options);
+    result.exitCode = await exec.exec(
+      'git',
+      ['clone', '--depth=1', '--single-branch', '--branch', i.PublishBranch, remoteURL, workDir],
+      options,
+    );
     if (result.exitCode === 0) {
       await createDir(destDir);
       if (i.KeepFiles) {
-        core.info(`[INFO]: Keeping existing files`);
+        core.info('[INFO]: Keeping existing files');
       } else {
         core.info(`[INFO]: clean up ${destDir}`);
         core.info(`[INFO]: chdir ${destDir}`);
@@ -97,9 +103,8 @@ export async function setRepo(i: Inputs, remoteURL: string, workDir: string): Pr
       process.chdir(workDir);
       await copyAssets(publishDir, destDir, i.ExcludeAssets);
       return;
-    } else {
-      throw new Error(`Failed to clone remote branch ${i.PublishBranch}`);
     }
+    throw new Error(`Failed to clone remote branch ${i.PublishBranch}`);
   } catch (err) {
     if (err instanceof Error) {
       core.info(`[INFO] first deployment, create new branch ${i.PublishBranch}`);
@@ -110,7 +115,7 @@ export async function setRepo(i: Inputs, remoteURL: string, workDir: string): Pr
       await createBranchForce(i.PublishBranch);
       await copyAssets(publishDir, destDir, i.ExcludeAssets);
     } else {
-      throw new Error(`unexpected error: ${err}`)
+      throw new Error(`unexpected error: ${err}`);
     }
   }
 }

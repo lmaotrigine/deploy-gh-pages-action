@@ -6,7 +6,7 @@ import fs from 'fs';
 export function getHomeDir(): string {
   let homeDir = '';
   if (process.platform === 'win32') {
-    homeDir = process.env['USERPROFILE'] || 'C:\\';
+    homeDir = process.env.USERPROFILE || 'C:\\';
   } else {
     homeDir = `${process.env.HOME}`;
   }
@@ -34,8 +34,8 @@ export function addNoJekyll(workDir: string, disableNojekyll: boolean): void {
       }
       throw err;
     }
-    fs.close(fd, (err) => {
-      if (err) throw err;
+    fs.close(fd, (e) => {
+      if (e) throw e;
     });
   });
 }
@@ -46,24 +46,29 @@ export function addCNAME(workDir: string, content: string): void {
   fs.open(filepath, 'w', (err, fd) => {
     if (err) {
       if (err.code === 'EEXIST') {
-        core.info(`CNAME already exists, skip adding CNAME`);
+        core.info('CNAME already exists, skip adding CNAME');
         return;
       }
       throw err;
     }
     try {
-      fs.write(fd, content + '\n', (err) => {
-        if (err) throw err;
+      fs.write(fd, `${content}\n`, (e) => {
+        if (e) throw e;
       });
     } finally {
-      fs.close(fd, (err) => {
-        if (err) throw err;
+      fs.close(fd, (e) => {
+        if (e) throw e;
       });
     }
-  })
+  });
 }
 
-export function skipOnFork(isFork: boolean, githubToken: string, deployKey: string, PersonalAccessToken: string): boolean {
+export function skipOnFork(
+  isFork: boolean,
+  githubToken: string,
+  deployKey: string,
+  PersonalAccessToken: string,
+): boolean {
   if (isFork) {
     if (githubToken === '' && deployKey === '' && PersonalAccessToken === '') {
       return true;

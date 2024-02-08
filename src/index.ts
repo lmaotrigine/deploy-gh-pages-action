@@ -9,7 +9,7 @@ import { getWorkDirName, addNoJekyll, addCNAME, skipOnFork } from './utils';
 
 async function run(): Promise<void> {
   try {
-    core.info(`[INFO]: Starting deploy action`);
+    core.info('[INFO]: Starting deploy action');
     const i = getInputs();
     core.startGroup('Dump inputs');
     showInputs(i);
@@ -33,7 +33,7 @@ async function run(): Promise<void> {
     const remoteURL = await setTokens(i);
     core.debug(`remoteURL: ${remoteURL}`);
     core.endGroup();
-    
+
     core.startGroup('Prepare publishing');
     const date = new Date();
     const unixTime = date.getTime();
@@ -70,7 +70,7 @@ async function run(): Promise<void> {
     await pushTag(i.TagName, i.TagMessage);
     core.endGroup();
 
-    core.info(`[INFO]: Finished deploy action`);
+    core.info('[INFO]: Finished deploy action');
   } catch (err) {
     if (err instanceof Error) {
       throw new Error(err.message);
@@ -83,12 +83,12 @@ async function run(): Promise<void> {
 // entrypoint lol
 (async (): Promise<void> => {
   try {
-    await run()
+    await run();
   } catch (err) {
     if (err instanceof Error) {
-      core.setFailed(`Action failed with error: ${err.message}`)
+      core.setFailed(`Action failed with error: ${err.message}`);
     } else {
-      core.setFailed(`unexpected error: ${err}`)
+      core.setFailed(`unexpected error: ${err}`);
     }
   }
 })();

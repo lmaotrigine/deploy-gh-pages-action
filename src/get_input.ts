@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import {type Inputs} from './lib';
+import { type Inputs } from './lib';
 
 export function showInputs(i: Inputs): void {
   let authMethod = '';
@@ -37,7 +37,7 @@ export function getInputs(): Inputs {
   const enableJekyll = isBoolean(core.getInput('enable_jekyll'));
   const disableNojekyll = isBoolean(core.getInput('disable_nojekyll'));
   if (enableJekyll && disableNojekyll) {
-    throw new Error(`Use either of enable_jekyll or disable_nojekyll`);
+    throw new Error('Use either of enable_jekyll or disable_nojekyll');
   } else if (enableJekyll || disableNojekyll) {
     useBuiltinjekyll = true;
   }
